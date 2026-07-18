@@ -24,7 +24,7 @@ from textile.regex_strings import (align_re_s, cls_re_s, pnct_re_s,
                                    regex_snippets, syms_re_s, table_span_re_s)
 from textile.utils import (decode_high, encode_high, encode_html, generate_tag,
                            getimagesize, has_raw_text, human_readable_url,
-                           is_rel_url, is_valid_url, list_type,
+                           is_rel_url, is_valid_url, list_type, split_url,
                            normalize_newlines, parse_attributes, pba)
 from textile.objects import Block, Table
 
@@ -948,15 +948,11 @@ class Textile(object):
                 break
 
         url = ''.join(url_chars)
-        try:
-            uri_parts = urlsplit(url)
-        except ValueError:
-            # urlsplit raises on malformed IPv6 hosts; treat as a non-link.
-            return in_.replace('{0}linkStartMarker:'.format(self.uid), '')
-
-        scheme_in_list = uri_parts.scheme in self.url_schemes
-        valid_scheme = (uri_parts.scheme and scheme_in_list)
-        if not is_valid_url(url) and not valid_scheme:
+        uri_parts = split_url(url)
+        scheme_in_list = bool(uri_parts) and uri_parts.scheme in self.url_schemes
+        valid_scheme = bool(uri_parts) and uri_parts.scheme and scheme_in_list
+        # One gate: unparseable URL (malformed IPv6) or non-URL without scheme.
+        if uri_parts is None or (not is_valid_url(url) and not valid_scheme):
             return in_.replace('{0}linkStartMarker:'.format(self.uid), '')
 
         if text == '$':

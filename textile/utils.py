@@ -3,7 +3,7 @@ try:
 except ImportError:
     import re
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit
 import html
 
 from collections import OrderedDict
@@ -135,6 +135,14 @@ def is_valid_url(url):
     if parsed.scheme == '':
         return True
     return False
+
+
+def split_url(url):
+    """urlsplit wrapper; None on malformed hosts (e.g. broken IPv6)."""
+    try:
+        return urlsplit(url)
+    except ValueError:
+        return None
 
 
 def list_type(list_string):
