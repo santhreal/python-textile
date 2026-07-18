@@ -69,3 +69,27 @@ def test_quotes_in_link_text():
     result = t.parse(test)
     expect = '\t<p><a href="url">&#8220;this is a quote in link text&#8221;</a></p>'
     assert result == expect
+
+
+def test_link_url_with_array_query_params():
+    """URLs with PHP-style array query params (q[]=...) must not crash."""
+    t = Textile()
+
+    result = t.parse('"x":http://example.com?q[]=1')
+    expect = '\t<p><a href="http://example.com?q[]=1">x</a></p>'
+    assert result == expect
+
+    result = t.parse('"x":http://example.com?q[]=value1&q[]=value2')
+    expect = '\t<p><a href="http://example.com?q[]=value1&q[]=value2">x</a></p>'
+    assert result == expect
+
+    result = t.parse('"x":http://example.com?q[]=value1]following')
+    expect = '\t<p><a href="http://example.com?q[]=value1">x</a>following</p>'
+    assert result == expect
+
+    result = t.parse('See "docs":http://example.com/api?ids[]=1&ids[]=2 for more.')
+    expect = (
+        '\t<p>See <a href="http://example.com/api?ids[]=1&ids[]=2">docs</a> '
+        'for more.</p>'
+    )
+    assert result == expect
