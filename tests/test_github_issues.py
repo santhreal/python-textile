@@ -431,3 +431,15 @@ ESCAPED "good" test'''
     t = textile.Textile()
     result = t.parse(test)
     assert result == expect
+
+
+def test_link_invalid_ipv6_host_is_not_a_link():
+    result = textile.textile('"a":http://[')
+    expect = '	<p>&#8220;a&#8221;:http://[</p>'
+    assert result == expect
+
+
+def test_link_incomplete_ipv6_host_is_not_a_link():
+    result = textile.textile('"a":http://[::1')
+    expect = '	<p>&#8220;a&#8221;:http://[::1</p>'
+    assert result == expect

@@ -948,7 +948,11 @@ class Textile(object):
                 break
 
         url = ''.join(url_chars)
-        uri_parts = urlsplit(url)
+        try:
+            uri_parts = urlsplit(url)
+        except ValueError:
+            # urlsplit raises on malformed IPv6 hosts; treat as a non-link.
+            return in_.replace('{0}linkStartMarker:'.format(self.uid), '')
 
         scheme_in_list = uri_parts.scheme in self.url_schemes
         valid_scheme = (uri_parts.scheme and scheme_in_list)
