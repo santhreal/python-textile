@@ -99,3 +99,17 @@ yet anothe word</pre>'''
     expect = '\t<p>text text</p>\n\n\n\t<h1>Hello</h1>'
     result = textile.textile(text)
     assert result == expect
+
+
+def test_extended_paragraph_empty_first_chunk():
+    """Extended p.. with an empty first chunk must still render later chunks."""
+    result = textile.textile('p.. \n\nhello')
+    expect = '<p></p>\n\n<p>hello</p>'
+    assert result == expect
+
+    result = textile.textile('p.. x\n\ny')
+    expect = '<p>x</p>\n\n<p>y</p>'
+    assert result == expect
+
+    assert textile.textile('note#a. hello') == ''
+    assert textile.textile('p. note#a. hello') == ''

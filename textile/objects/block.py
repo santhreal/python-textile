@@ -41,8 +41,8 @@ class Block(object):
                 flags=re.X | re.U)
             notedef = notedef_re.sub(self.textile.fParseNoteDefs, self.content)
 
-            # It will be empty if the regex matched and ate it.
-            if '' == notedef:
+            # Empty input also yields ''; only eat when a note def was consumed.
+            if self.content and '' == notedef:
                 self.content = notedef
                 self.eat = True
 
