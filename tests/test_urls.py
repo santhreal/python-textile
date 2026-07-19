@@ -69,3 +69,11 @@ def test_quotes_in_link_text():
     result = t.parse(test)
     expect = '\t<p><a href="url">&#8220;this is a quote in link text&#8221;</a></p>'
     assert result == expect
+
+
+def test_link_url_with_bracket_equals():
+    # ]= in the URL made the trailing-] splitter assume a match and call .group on None
+    t = Textile()
+    result = t.parse('"t":http://x.com?a]=b')
+    assert 'href=' in result
+    assert 'a]=b' in result

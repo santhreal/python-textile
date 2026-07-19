@@ -863,8 +863,9 @@ class Textile(object):
         # balance
         if (counts[']']):
             m = re.search(r'(?P<url>^.*\])(?!=)(?P<end>.*?)$', url, flags=re.U)
-            url = m.group('url')
-            tight = '{0}{1}'.format(m.group('end'), tight)
+            if m:
+                url = m.group('url')
+                tight = '{0}{1}'.format(m.group('end'), tight)
 
         # Now we have the array of all the multi-byte chars in the url we will
         # parse the  uri backwards and pop off  any chars that don't belong
