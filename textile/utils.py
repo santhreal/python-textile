@@ -232,7 +232,9 @@ def parse_attributes(block_attributes, element=None, include_id=True, restricted
 
     m = re.search(r'({0})'.format(halign_re_s), matched)
     if m:
-        style.append("text-align:{0}".format(hAlign[m.group(1)]))
+        align = m.group(1)
+        if align in hAlign:
+            style.append("text-align:{0}".format(hAlign[align]))
 
     if element == 'col':
         pattern = r'(?:\\(\d+)\.?)?\s*(\d+)?'
