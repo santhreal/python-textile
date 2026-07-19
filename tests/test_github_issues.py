@@ -287,6 +287,13 @@ def test_github_issue_56():
     assert result == expect
 
 
+def test_rclist_line_missing_defn_separator():
+    """A - list line without := must not crash fRCList."""
+    result = textile.textile("- term := def\n- broken line")
+    expect = '<dl>\n\t<dt>term</dt>\n\t<dd>def</dd>\n</dl>'
+    assert result == expect
+
+
 def test_github_pull_61():
     """Fixed code block multiline encoding on quotes/span"""
     test = ('''bc.. This is some TEXT inside a "Code BLOCK"

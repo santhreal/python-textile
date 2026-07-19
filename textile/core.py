@@ -1265,6 +1265,9 @@ class Textile(object):
                 .format(regex_snippets['space']),
                 content,
                 re.S)
+            # Outer - list matched; skip lines that still lack :=
+            if not xm:
+                continue
             term, definition, _ = xm.groups()
             # cleanup
             term = term.strip()
