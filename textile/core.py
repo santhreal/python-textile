@@ -1426,14 +1426,13 @@ class Textile(object):
         nolink = nolink == '!'
 
         # Assign a sequence number to this reference if there isn't one already
-        if label in self.notes:
-            num = self.notes[label]['seq']
-        else:
-            self.notes[label] = {
-                'seq': self.note_index, 'refids': [], 'id': ''
-            }
-            num = self.note_index
+        if label not in self.notes:
+            self.notes[label] = {'refids': [], 'id': ''}
+        if 'seq' not in self.notes[label]:
+            self.notes[label].setdefault('refids', [])
+            self.notes[label]['seq'] = self.note_index
             self.note_index = self.note_index + 1
+        num = self.notes[label]['seq']
 
         # Make our anchor point and stash it for possible use in backlinks when
         # the note list is generated later...

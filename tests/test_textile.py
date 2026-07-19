@@ -175,6 +175,19 @@ def test_endnotes_undefined_note():
     assert result_re.search(html) is not None
 
 
+def test_endnotes_definition_before_reference():
+    test = """note#a. This is the note.\n\nScientists say[#a] hello.\n\nnotelist."""
+    html = textile.textile(test)
+    result_pattern = (
+        r"""\t<p>Scientists say<sup><a href="#note([a-f0-9]{32})-1">"""
+        r"""<span id="noteref\1-2">1</span></a></sup> hello.</p>\n\n"""
+        r"""\t<ol>\n\t\t<li><sup><a href="#noteref\1-2">a</a></sup>"""
+        r"""<span id="note\1-1"> </span>This is the note.</li>\n\t</ol>$"""
+    )
+    result_re = re.compile(result_pattern)
+    assert result_re.search(html) is not None
+
+
 def test_encode_url():
     # I tried adding these as doctests, but the unicode tests weren't
     # returning the correct results.
