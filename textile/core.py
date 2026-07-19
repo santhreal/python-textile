@@ -546,8 +546,10 @@ class Textile(object):
             # if we're in an extended block, and we haven't specified a new
             # tag, join this line to the last item of the output
             if ext and not match:
-                last_item = out.pop()
-                out.append('{0}{1}'.format(last_item, line))
+                # ###.. eats every chunk; nothing was appended for the opener
+                if not block.eat:
+                    last_item = out.pop()
+                    out.append('{0}{1}'.format(last_item, line))
             elif not block.eat:
                 # or if it's a type of block which indicates we shouldn't drop
                 # it, add it to the output.

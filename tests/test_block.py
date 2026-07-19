@@ -73,6 +73,14 @@ def test_blockcode_comment():
     assert result == expect
 
 
+def test_extended_comment_with_blank_line():
+    # Blank lines split extended blocks into chunks; ###.. must keep eating.
+    input = '###.. block comment\n\nanother line\n\np. New line'
+    expect = '\t<p>New line</p>'
+    assert textile.textile(input) == expect
+    assert textile.textile('###.. comment\n\nstill comment') == ''
+
+
 def test_extended_pre_block_with_many_newlines():
     """Extra newlines in an extended pre block should not get cut down to only
     two."""
