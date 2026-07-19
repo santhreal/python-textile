@@ -10,7 +10,7 @@ from collections import OrderedDict
 
 from xml.etree import ElementTree
 
-from textile.regex_strings import valign_re_s, halign_re_s
+from textile.regex_strings import valign_re_s
 
 # Regular expressions for stripping chunks of HTML,
 # leaving only content not wrapped in a tag or a comment
@@ -230,11 +230,9 @@ def parse_attributes(block_attributes, element=None, include_id=True, restricted
         style.append("padding-right:{0}em".format(len(m.group(1))))
         matched = matched.replace(m.group(0), '')
 
-    m = re.search(r'({0})'.format(halign_re_s), matched)
+    m = re.search(r'(<>|<|>|=)', matched)
     if m:
-        align = m.group(1)
-        if align in hAlign:
-            style.append("text-align:{0}".format(hAlign[align]))
+        style.append("text-align:{0}".format(hAlign[m.group(1)]))
 
     if element == 'col':
         pattern = r'(?:\\(\d+)\.?)?\s*(\d+)?'

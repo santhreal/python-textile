@@ -1,4 +1,6 @@
 from typing import OrderedDict
+
+import textile
 from textile.utils import parse_attributes
 
 
@@ -22,20 +24,11 @@ def test_parse_attributes_edge_cases():
     assert result == expect
 
     assert parse_attributes('(<)') == OrderedDict()
-
-
-def test_parse_attributes_leftover_parens_not_halign():
-    # Leftover "(" after padding must not KeyError (halign_re matches parens;
-    # hAlign only has <, >, =, <>).
-    assert parse_attributes('(()(') == {'style': 'padding-left:2em; padding-right:1em;'}
-    assert parse_attributes('(( ()') == {'style': 'padding-left:2em; padding-right:1em;'}
-
-
-def test_block_padding_typo_does_not_keyerror():
-    import textile
-    out = textile.textile('p(( (). text')
-    assert 'padding-left:2em' in out
-    assert 'text' in out
-    out2 = textile.textile('p(()(. text')
-    assert 'padding-left:2em' in out2
-    assert 'text' in out2
+    assert parse_attributes('(()(') == {
+        'style': 'padding-left:2em; padding-right:1em;'}
+    assert parse_attributes('(( ()') == {
+        'style': 'padding-left:2em; padding-right:1em;'}
+    assert textile.textile('p(( (). text') == (
+        '\t<p style="padding-left:2em; padding-right:1em;">text</p>')
+    assert textile.textile('p(()(. text') == (
+        '\t<p style="padding-left:2em; padding-right:1em;">text</p>')
