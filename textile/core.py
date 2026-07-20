@@ -230,6 +230,21 @@ class Textile(object):
         text = normalize_newlines(text)
         text = text.replace(self.uid, '')
 
+        # For any raw <pre>...</pre> block, we run code() on it early
+        # to shelve its contents (including inner <code> blocks) so they
+        # don't get split by block splitting or mangled by other inline parsing.
+        def process_pre(m):
+            atts = m.group('atts')
+            content = m.group('content')
+            normalized = '<pre>{0}</pre>'.format(content)
+            processed = self.code(normalized)
+            if atts:
+                processed = processed.replace('<pre>', '<pre{0}>'.format(atts), 1)
+            return processed
+
+        pre_re = re.compile(r'<pre(?P<atts>[^>]*?)>(?P<content>.*?)</pre>', re.S | re.I)
+        text = pre_re.sub(process_pre, text)
+
         if self.block_tags:
             if self.lite:
                 self.blocktag_allowlist = set(['bq', 'p', 'br'])

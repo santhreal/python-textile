@@ -431,3 +431,14 @@ ESCAPED "good" test'''
     t = textile.Textile()
     result = t.parse(test)
     assert result == expect
+
+
+def test_github_issue_80():
+    """Blank lines in raw pre/code blocks should not break block splitting"""
+    test = '<pre><code>Line1\n\nLine2</code></pre>'
+    expect = '<pre><code>Line1\n\nLine2</code></pre>'
+    assert textile.textile(test) == expect
+
+    test_with_atts = '<pre class="python"><code>Line1\n\nLine2</code></pre>'
+    expect_with_atts = '<pre class="python"><code>Line1\n\nLine2</code></pre>'
+    assert textile.textile(test_with_atts) == expect_with_atts
